@@ -1,0 +1,8 @@
+; $Id$
+name = my_module
+description = To validate google recaptcha
+core = 7.x
+version = "7.x-0.0"
+package = my_module
+
+

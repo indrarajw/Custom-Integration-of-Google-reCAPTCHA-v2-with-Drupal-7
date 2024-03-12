@@ -1,0 +1,45 @@
+<?php
+function google_recaptcha_validation($form_name, $post_data)
+{
+    $validated = false;
+    try {
+        if (isset($post_data['g-recaptcha-response'])) {
+            // Your secret key
+            $secret = variable_get('reCAPTCHA_secret_key', '');
+
+            // Verify the user's response
+            $captcha = $_POST['g-recaptcha-response'];
+            $remoteip = $_SERVER['REMOTE_ADDR'];
+
+            $url = 'https://www.google.com/recaptcha/api/siteverify';
+            $data = array(
+                'secret' => $secret,
+                'response' => $response,
+                'remoteip' => $remoteip
+            );
+
+            $options = array(
+                'http' => array(
+                    'header' => "Content-type: application/x-www-form-urlencoded\r\n",
+                    'method' => 'POST',
+                    'content' => http_build_query($data)
+                )
+            );
+
+            $context = stream_context_create($options);
+            $result = file_get_contents($url, false, $context);
+            $responseJson = json_decode($result);
+
+            if ($responseJson->success == true) {
+                $validated = true;
+            } else {
+                watchdog('recaptcha', 'Fail to validate captch | Captcha responce - %response | Body = %body | Form Name = %form_name', array('%response' => $result, '%body' => json_encode($post_data), '%form_name' => $form_name), WATCHDOG_ERROR);
+            }
+        } else {
+            watchdog('recaptcha', 'Empty Captcha responce | Body = %body | Form Name = %form_name', array('%body' => json_encode($post_data), '%form_name' => $form_name), WATCHDOG_ERROR);
+        }
+    } catch (Exception $ex) {
+        watchdog('recaptcha', 'Re-captcha exception responce | Body = %body | Form Name = %form_name | error = %error', array('%body' => json_encode($post_data), '%form_name' => $form_name, '%error' => $ex->getMessage()), WATCHDOG_ERROR);
+    }
+    return $validated;
+}
