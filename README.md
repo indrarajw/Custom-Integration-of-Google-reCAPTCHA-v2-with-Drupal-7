@@ -8,5 +8,7 @@ To follow along with the guide:
 
 1. Create a new page on your Drupal 7 site.
 2. Copy and paste the contents of the "form.php" file into the newly created page.
-3. Additionally, create a page with the URL "form/submit-form".
-4. Copy and paste the contents of the "submit.php" file into the "submit-form" page.
+3. Move "my_module.module" and "my_module.info" to my_website/sites/all/modules/my_module folder.
+4. Enable the module from admin panel.
+5. Additionally, create a page with the URL "form/submit-form".
+6. Copy and paste the contents of the "submit.php" file into the "submit-form" page.
